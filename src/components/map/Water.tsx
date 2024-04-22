@@ -6,7 +6,7 @@ import river2 from '@/assets/Elements/PNG/River2.png';
 import river3 from '@/assets/Elements/PNG/River3.png';
 import log from '@/assets/Elements/PNG/Log.png';
 
-const Water = ({ quantity }) => {
+const Water = ({ quantity }: { quantity: number }) => {
 
     const RiverImage = () => {
         const [riverSrc, setRiverSrc] = useState([river.src, river2.src, river3.src]);
@@ -15,7 +15,7 @@ const Water = ({ quantity }) => {
         useEffect(() => {
             const interval = setInterval(() => {
                 setRiverSrc((prev) => {
-                    const newSrc = [...prev];
+                    const newSrc = [...prev] as any;
                     newSrc.push(newSrc.shift());
                     return newSrc;
                 });
@@ -38,18 +38,18 @@ const Water = ({ quantity }) => {
     }
     const Logs = React.memo(function Logs() {
 
-        const Log = React.memo(function Log({ id, className }) {
-            const { isCollide, setIsDead, pos, canChangeState } = usePlayerContent();
+        const Log = React.memo(function Log({ id, className }: { id: any, className: string }) {
+            const { isCollide, setIsDead, pos, canChangeState } = usePlayerContent() as any;
             const canvasRef = useRef(null);
             const positionRef = useRef(-101);
             const speedRef = useRef(2);
             const [position, setPosition] = useState(-101);
-            const imgRef = useRef(null);
-            const [randomSpeed, setRandomSpeed] = useState();
-            const [randomDelay, setRandomDelay] = useState();
+            const imgRef = useRef(null) as any;
+            const [randomSpeed, setRandomSpeed] = useState<number | undefined>();
+            const [randomDelay, setRandomDelay] = useState<number>();
 
             useEffect(() => {
-                const canvas = canvasRef.current;
+                const canvas = canvasRef.current as any;
                 const ctx = canvas.getContext('2d');
 
                 const drawFrame = () => {
@@ -81,7 +81,7 @@ const Water = ({ quantity }) => {
                 imgRef.current = image;
             }, []);
 
-            const drawLog = (ctx) => {
+            const drawLog = (ctx: CanvasRenderingContext2D) => {
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
                 const image = imgRef.current;
@@ -108,7 +108,7 @@ const Water = ({ quantity }) => {
             const startDelay = [2000, 3000, 4000, 5000]
 
             useEffect(() => {
-                const randomDelayGen = startDelay[Math.floor(Math.random() * startDelay.length)];
+                const randomDelayGen = startDelay[Math.floor(Math.random() * startDelay.length)] as number;
                 setRandomDelay(randomDelayGen);
             }, []);
 
@@ -118,13 +118,13 @@ const Water = ({ quantity }) => {
             }, []);
 
             useEffect(() => {
-                let animationFrameId;
+                let animationFrameId = 0;
                 let lastTime = 0;
 
-                const updatePosition = (timestamp) => {
+                const updatePosition = (timestamp: number) => {
                     if (lastTime !== 0) {
                         const timeDelta = timestamp - lastTime;
-                        const distance = (randomSpeed / 50) * timeDelta;
+                        const distance = ((randomSpeed || 0) / 50) * timeDelta;
                         setPosition((prevPosition) => {
                             let newPosition = prevPosition + distance;
                             if (newPosition >= 1920) {

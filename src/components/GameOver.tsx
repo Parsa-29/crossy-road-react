@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'next/link'
 import cup from "@/assets/Elements/PNG/cup.png";
 import Image from 'next/image';
 import Modal from './Modal';
 import axios from 'axios';
 
-const GameOver = ({ score = 0, bestScore = 0, onClick, leaderBoardBtn }) => {
+interface GameOverProps {
+    score?: number;
+    bestScore?: number;
+    onClick: () => void;
+}
+
+const GameOver = ({ score = 0, bestScore = 0, onClick }: GameOverProps) => {
     const [showLB, setShowLB] = useState(false);
     const [leaderboard, setLeaderboard] = useState([]);
     useEffect(() => {
@@ -25,7 +30,7 @@ const GameOver = ({ score = 0, bestScore = 0, onClick, leaderBoardBtn }) => {
                             <p className='leaderboard-title'>Score</p>
                         </div>
                         <div className='leaderboard-body'>
-                            {leaderboard.map((data, index) => (
+                            {leaderboard.map((data: any, index) => (
                                 <div key={index} className='leaderboard-row'>
                                     <p className='leaderboard-data'>{index + 1}</p>
                                     <p className='leaderboard-data'>{data.name}</p>

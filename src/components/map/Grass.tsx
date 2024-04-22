@@ -4,7 +4,12 @@ import cacti2 from '@/assets/Elements/PNG/Cacti2.png';
 import cacti3 from '@/assets/Elements/PNG/Cacti3.png';
 import Image from 'next/image';
 
-  const Cacti = React.memo(function Cacti({ randomCactiImg, random }) {
+interface CactiProps {
+  randomCactiImg: string;
+  random: boolean;
+}
+
+const Cacti = React.memo(function Cacti({ randomCactiImg, random }: CactiProps) {
   if (random) {
     return (
       <div className="carti-img">
@@ -34,11 +39,11 @@ import Image from 'next/image';
 });
 
 const GenerateGrass = () => {
-  const [grassWidth, setGrassWidth] = useState(0);
+  const [grassWidth, setGrassWidth] = useState<number>(0);
 
   useEffect(() => {
     const handleResize = () => {
-      const grassWidth = document.querySelector('.grass').clientWidth;
+      const grassWidth = document.querySelector('.grass')?.clientWidth || 0; // Use optional chaining to handle null value
       setGrassWidth(grassWidth);
     };
 
@@ -56,7 +61,7 @@ const GenerateGrass = () => {
     cacti1,
     cacti2,
     cacti3,
-  ], []);
+  ], []) as any;
 
   const cactiPositions = useMemo(() => {
     const positionsArray = Array.from({ length: Math.floor(grassWidth / 50) });

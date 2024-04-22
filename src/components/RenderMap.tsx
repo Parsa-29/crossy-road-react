@@ -6,7 +6,7 @@ import Water from './map/Water';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List } from 'react-virtualized';
 import 'react-virtualized/styles.css';
 
-const Biomes = ({ quantity, biome }) => {
+const Biomes = ({ quantity, biome }: { quantity: number, biome: number }) => {
 
     if (biome === 0) {
         return (
@@ -45,17 +45,17 @@ const Biomes = ({ quantity, biome }) => {
 }
 
 const RenderMap = () => {
-    const { player } = usePlayerContent();
+    const { player } = usePlayerContent() as any;
     const bottomRowRef = useRef(null);
-    const [biomeList, setBiomeList] = useState([]);
-    const [containerSize, setContainerSize] = useState({});
+    const [biomeList, setBiomeList] = useState([]) as any;
+    const [containerSize, setContainerSize] = useState<{ width: number, height: number }>({ width: 0, height: 0 });
     const [checkList, setCheckList] = useState(false);
     const [bHeight, setBHeight] = useState(0);
     const [bottomRowIndex, setBottomRowIndex] = useState(0); // Track the bottom row index
 
     useEffect(() => {
         setBiomeList(() => {
-            let biomeList = [
+            let biomeList: any = [
                 <div className="biome block-shadow-start" key={""}>
                     <div className='column grass' />
                 </div>
@@ -65,7 +65,7 @@ const RenderMap = () => {
                 for (let i = 0; i < 500; i++) {
                     const quantity = Math.floor(Math.random() * 4) + 1;
                     //0 or 1
-                    const biome = Math.floor(Math.random() * 2);
+                    const biome = Math.floor(Math.random() * 2) as number;
                     biomeList.push({
                         biome: <><Biomes quantity={quantity} biome={biome} /></>
                     });
@@ -95,7 +95,7 @@ const RenderMap = () => {
     }, []);
 
     useEffect(() => {
-        const crossy_road_container = document.querySelector('.game-container');
+        const crossy_road_container = document.querySelector('.game-container') as HTMLElement;
         setTimeout(() => {
             if (crossy_road_container) {
                 setContainerSize({
@@ -114,7 +114,7 @@ const RenderMap = () => {
         })
     );
 
-    const cellRenderer = ({ index, key, parent, style }) => {
+    const cellRenderer = ({ index, key, parent, style }: { index: number, key: string, parent: any, style: any }) => {
         const item = biomeList[index];
         const isBottomRow = index === biomeList.length - 1;
 
@@ -150,8 +150,8 @@ const RenderMap = () => {
 
     useEffect(() => {
         // set className to queryselector #biome-container's first children
-        const biomeContainer = document.querySelector('#biome-container');
-        const biomeContainerFirstChild = biomeContainer.firstElementChild;
+        const biomeContainer = document.querySelector('#biome-container') as HTMLElement;
+        const biomeContainerFirstChild = biomeContainer.firstElementChild as HTMLElement;
         biomeContainerFirstChild.classList.add('biome-container-first-child');
     }, []);
 
@@ -185,12 +185,12 @@ const RenderMap = () => {
     }, [checkList])
 
     useEffect(() => {
-        const player = document.querySelector('.player');
+        const player = document.querySelector('.player') as HTMLElement;
 
         //always center player in screen when player is in screen
         if (player) {
-            const screenTop = document.querySelector('.screenTop').getBoundingClientRect();
-            const screenBottom = document.querySelector('.screenBottom').getBoundingClientRect();
+            const screenTop = document.querySelector('.screenTop')?.getBoundingClientRect();
+            const screenBottom = document.querySelector('.screenBottom')?.getBoundingClientRect() as DOMRect;
             const playerRect = player.getBoundingClientRect();
 
             player.scrollIntoView({

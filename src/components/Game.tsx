@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import RenderMap from './RenderMap';
-import { usePlayerContent } from '@/context/PlayerContent';
+import { Player, usePlayerContent } from '@/context/PlayerContent';
 import grass from '@/assets/Elements/PNG/grass.jpg';
 import GameOver from './GameOver';
 import axios from 'axios';
@@ -8,14 +8,14 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 const Game = () => {
-  const columnsRef = useRef(null);
-  const gameContainerRef = useRef(null);
-  const playerRef = useRef(null);
-  const { score, setScore, isDead, setIsDead, isCollide, setBestScore, pos, bestScore, player, setPlayer, skin, setSkin, setContainerWidth, setContainerHeight, canChangeState } = usePlayerContent();
+  const columnsRef = useRef(null) as any;
+  const gameContainerRef = useRef(null) as any;
+  const playerRef = useRef(null) as any;
+  const { score, setScore, isDead, setIsDead, isCollide, setBestScore, pos, bestScore, player, setPlayer, skin, setSkin, setContainerWidth, setContainerHeight, canChangeState }: any = usePlayerContent();
   const [scrollUp, setScrollUp] = useState(false);
   const [highestPoint, setHighestPoint] = useState(player.y);
-  const [biome, setBiome] = useState([<RenderMap key={""} />]);
-  const [containerSize, setContainerSize] = useState({});
+  const [biome, setBiome] = useState([<RenderMap key={""} />]) as any;
+  const [containerSize, setContainerSize] = useState<{ width: number, height: number }>();
   const [roudedWidth, setRoundedWidth] = useState(0);
   const crossy_road_containerRef = useRef(null);
   const navigate = useRouter()
@@ -50,7 +50,7 @@ const Game = () => {
 
   // Scroll to bottom of page
   useEffect(() => {
-    const main_game_container = crossy_road_containerRef.current
+    const main_game_container = crossy_road_containerRef.current as any
     //get width and height of the viewport and
 
     if (main_game_container) {
@@ -74,7 +74,7 @@ const Game = () => {
 
   //set gameContainerRef width to roundedWidth
   useEffect(() => {
-    if (containerSize.width) {
+    if (containerSize?.width) {
       // round containerSize.width to the nearest 50
       const roundedWidth = Math.round(containerSize.width / 50) * 50;
       //set gameContainerRef width to roundedWidth
@@ -94,12 +94,12 @@ const Game = () => {
         right: false,
       });
     }
-  }, [containerSize.width]);
+  }, [containerSize?.width]);
 
   // Scroll to top of page when player is in screenTop
   useEffect(() => {
-    const screenTop = document.querySelector('.screenTop').getBoundingClientRect();
-    const player = document.querySelector('.player').getBoundingClientRect();
+    const screenTop = document.querySelector('.screenTop')?.getBoundingClientRect() as DOMRect;
+    const player = document.querySelector('.player')?.getBoundingClientRect() as DOMRect;
 
     if (
       player.left >= screenTop.left &&
@@ -117,7 +117,7 @@ const Game = () => {
   // Control player movement
   useEffect(() => {
     // When click W A S D, move player, every 50px is a step
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: any) => {
       const gameContainer = gameContainerRef.current.getBoundingClientRect();
       const playerRect = playerRef.current.getBoundingClientRect();
       const playerHeight = playerRef.current.offsetHeight;
@@ -125,7 +125,7 @@ const Game = () => {
       if (canChangeState) {
         if (!isDead) {
           if (e.keyCode === 87 || e.key === 'ArrowUp') {
-            setPlayer((prev) => ({
+            setPlayer((prev: Player) => ({
               ...prev,
               y: prev.y + 50,
               top: false,
@@ -135,7 +135,7 @@ const Game = () => {
             }));
 
             if (!isDead) {
-              setHighestPoint((prev) => {
+              setHighestPoint((prev: number) => {
                 if (prev < player.y) {
                   return player.y;
                 }
@@ -148,7 +148,7 @@ const Game = () => {
             if (playerRect.bottom >= gameContainer.bottom - playerHeight) {
               return;
             }
-            setPlayer((prev) => ({
+            setPlayer((prev: Player) => ({
               ...prev,
               y: prev.y - 50,
               top: true,
@@ -162,7 +162,7 @@ const Game = () => {
             if (playerRect.left <= gameContainer.left) {
               return;
             }
-            setPlayer((prev) => ({
+            setPlayer((prev: Player) => ({
               ...prev,
               x: prev.x + 50,
               top: false,
@@ -176,7 +176,7 @@ const Game = () => {
             if (playerRect.right >= gameContainer.right) {
               return;
             }
-            setPlayer((prev) => ({
+            setPlayer((prev: Player) => ({
               ...prev,
               x: prev.x - 50,
               top: false,
@@ -225,7 +225,7 @@ const Game = () => {
   useEffect(() => {
     const fetchUserScore = async () => {
       try {
-        const data = localStorage.getItem('data');
+        const data = localStorage.getItem('data') as any;
         //find user score 
         const response = await axios.get(`/api/user?name=${JSON.parse(data).name}`);
         setBestScore(response.data.score);
@@ -242,7 +242,7 @@ const Game = () => {
     const saveScore = async () => {
       //update user score in local storage
       try {
-        const data = localStorage.getItem('data');
+        const data = localStorage.getItem('data') as any;
         const response = await axios.post('/api/update-score', {
           userData: {
             id: JSON.parse(data).id,

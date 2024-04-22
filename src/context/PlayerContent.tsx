@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { ContextType, createContext, useContext, useEffect, useState } from 'react';
 import playerFront from '../assets/Elements/PNG/player_front.png';
 import playerFrontWather from '../assets/Elements/PNG/player_front_wather.png';
 import playerBack from '../assets/Elements/PNG/player_back.png';
@@ -6,12 +6,20 @@ import playerBackWather from '../assets/Elements/PNG/player_back_wather.png';
 import playerSide from '../assets/Elements/PNG/player_side.png';
 import playerSideWather from '../assets/Elements/PNG/player_side_wather.png';
 
+export interface Player {
+    x: number;
+    y: number;
+    top: boolean;
+    bottom: boolean;
+    left: boolean;
+    right: boolean;
+}
 
-const PlayerContext = createContext();
+const PlayerContext = createContext(null) as any;
 
 export const usePlayerContent = () => useContext(PlayerContext);
 
-export const PlayerContent = ({ children }) => {
+export const PlayerContent = ({ children }: any) => {
     const [score, setScore] = useState(0);
     const [isDead, setIsDead] = useState(false);
     const [bestScore, setBestScore] = useState(0);
@@ -49,7 +57,7 @@ export const PlayerContent = ({ children }) => {
         return () => clearInterval(interval);
     }, []);
 
-    function isCollide(a, b) {
+    function isCollide(a: any, b: any) {
         var aRect = a && a.getBoundingClientRect();
         var bRect = b && b.getBoundingClientRect();
         return !(
