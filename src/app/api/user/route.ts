@@ -1,15 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { kv } from "@vercel/kv";
+import { unstable_noStore as noStore } from "next/cache";
 
-export async function GET(req: NextRequest, res: NextApiResponse) {
-  // from the url, get the name of the user and return the user object from data.json
-  const fs = require("fs");
-  const path = require("path");
-  const filePath = path.resolve("./src/app/api/register/data.json");
-  const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-
+export async function GET(req: NextRequest) {
+  noStore();
   const name = req.nextUrl.searchParams.get("name");
-  const user = data.find((user: any) => user.name === name);
+  const users: [] | null = await kv.get("users");
+  const user: any = users?.find((user: any) => user.name === name);
   const score = user ? user.score : 0;
-  return Response.json({ name, score });
+  return NextResponse.json({ name, score });
 }

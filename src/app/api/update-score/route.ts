@@ -1,19 +1,23 @@
+'use server'
 import { NextRequest } from "next/server";
+import { unstable_noStore as noStore } from "next/cache";
+import { kv } from "@vercel/kv";
 
 export async function POST(req: NextRequest) {
-  //find user by id from localstorage and update score
-  const fs = require("fs");
-  const path = require("path");
-  const filePath = path.resolve("./src/app/api/register/data.json");
-  const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-
   const { userData }: any = await req.json();
-  const user = data.find((user: any) => user.id === userData.id);
-  //update score only if new score is greater than old score
-  // user.score = userData.score;
-  if (userData.score > user.score) {
+  noStore();
+  const users: any = await kv.get("users");
+  const user = users?.find((user: any) => user.id === userData.id);
+  if (!user) {
+    return Response.json({ error: "User not found" });
+  }
+  if (userData.score > user?.score) {
+    //update only user's score and other data remains the same
     user.score = userData.score;
-    fs.writeFileSync(filePath, JSON.stringify(data));
+    await kv.set("users", [
+      ...users.filter((u: any) => u.id !== userData.id),
+      user,
+    ]);
   }
   return Response.json(user);
 }

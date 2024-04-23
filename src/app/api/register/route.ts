@@ -1,25 +1,20 @@
 import { NextRequest } from "next/server";
-
+import { kv } from "@vercel/kv";
+import { unstable_noStore as noStore } from "next/cache";
 export async function POST(req: NextRequest) {
   try {
-    const fs = require("fs");
-    const path = require("path");
-    const filePath = path.resolve("./src/app/api/register/data.json");
-    
-    // Read the existing data or initialize an empty array
-    let data = [];
-    if (fs.existsSync(filePath)) {
-      data = JSON.parse(fs.readFileSync(filePath, "utf8"));
-    }
-    
-    const id = data.length + 1;
+    noStore();
+
+    const users: [] | null = await kv.get("users");
+    const data = users ? users : [];
+
+    const id = Math.random().toString(36).substr(2, 9);
     const { name } = await req.json();
     const score = 0;
-    
-    data.push({ id, name, score });
-    
-    fs.writeFileSync(filePath, JSON.stringify(data));
-    
+
+    //update "users" key in KV with new user data
+    await kv.set("users", [...data, { id, name, score }]);
+
     return Response.json({ id, name, score });
   } catch (error) {
     console.error("Error processing request:", error);
